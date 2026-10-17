@@ -52,13 +52,15 @@ function quiescence(a,b,max,ctx,ply){
   if(++ctx.nodes>ctx.limit)throw new Error("search-limit");
   if(g.isCheckmate())return max?-100000:100000;
   if(g.isDraw())return 0;
-  const stand=evaluate();
+  const inCheck=g.isCheck(),stand=evaluate();
   if(ply>=4)return stand;
-  if(max){if(stand>=b)return b;a=Math.max(a,stand);}
-  else{if(stand<=a)return a;b=Math.min(b,stand);}
-  const captures=moveOrder(g.moves({verbose:true}).filter(m=>m.captured||m.promotion));
   let best=stand;
-  for(const m of captures){
+  if(!inCheck){
+    if(max){if(stand>=b)return b;a=Math.max(a,stand);}
+    else{if(stand<=a)return a;b=Math.min(b,stand);}
+  }else best=max?-Infinity:Infinity;
+  const candidates=moveOrder(g.moves({verbose:true}).filter(m=>inCheck||m.captured||m.promotion));
+  for(const m of candidates){
     g.move(m);let v;try{v=quiescence(a,b,!max,ctx,ply+1);}finally{g.undo();}
     if(max){best=Math.max(best,v);a=Math.max(a,best);}else{best=Math.min(best,v);b=Math.min(b,best);}
     if(b<=a)break;
