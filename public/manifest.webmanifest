@@ -1,0 +1,30 @@
+{
+  "id": "/",
+  "name": "FreeChess — Play Your Way",
+  "short_name": "FreeChess",
+  "description": "A beautiful, private chess game with adjustable bot strength and four house-inspired themes.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#090d0c",
+  "theme_color": "#090d0c",
+  "categories": [
+    "games",
+    "education"
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
