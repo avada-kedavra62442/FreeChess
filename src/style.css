@@ -16,3 +16,7 @@ body{background:radial-gradient(ellipse at 78% 2%,color-mix(in srgb,var(--accent
 .move-dot{background:var(--accent-secondary)}
 .avatar{border:1px solid color-mix(in srgb,var(--accent-secondary) 25%,transparent)}
 .elo-pill,.turn-pill{border:1px solid color-mix(in srgb,var(--accent) 15%,transparent)}
+
+/* Quiet heraldic motifs make each palette feel distinct without changing its color-only name. */
+.theme-card:after{content:attr(data-motif);border:0;width:auto;height:auto;right:-8px;bottom:-21px;font-size:82px;line-height:1;opacity:.16;filter:grayscale(1);transform:rotate(-12deg);pointer-events:none}
+.theme-symbol{font-size:30px;line-height:1;filter:drop-shadow(0 4px 12px color-mix(in srgb,var(--card-accent) 22%,transparent))}
