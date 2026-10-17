@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "node scripts/copy-stockfish.mjs && vite build",
+    "preview": "vite preview",
+    "predev": "node scripts/copy-stockfish.mjs"
   },
   "dependencies": {
-    "chess.js": "^1.4.0"
+    "chess.js": "^1.4.0",
+    "stockfish": "19.0.1"
   },
   "devDependencies": {
     "vite": "^6.4.1"
