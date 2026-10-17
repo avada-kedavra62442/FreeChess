@@ -1,10 +1,10 @@
 # FreeChess ♟️
 
-A responsive, installable chess experience with four dark, house-inspired Liquid Glass themes.
+A responsive, installable chess experience with four dark Liquid Glass color themes.
 
 ## Features
 - Bot strength presets from **100 to 3000 Elo** in 100-point increments.
-- Four themes: **Red / Gryffindor**, **Green / Slytherin**, **Blue / Ravenclaw**, and **Yellow / Hufflepuff**.
+- Four themes: **Red**, **Green**, **Blue**, and **Yellow**.
 - Dedicated play page at `/play`, legal moves, move history, undo, board flip, and game-state detection.
 - Chess runs locally in the browser; no account or game-data upload.
 - PWA manifest, service worker, and Apple Home Screen metadata.
