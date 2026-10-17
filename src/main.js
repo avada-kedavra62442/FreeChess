@@ -28,15 +28,24 @@ function search(d,a,b,max,ctx){
   if(g.isCheckmate())return max?-100000-d:100000+d;
   if(g.isDraw())return 0;
   if(d<=0)return quiescence(a,b,max,ctx,0);
+  const alphaStart=a,betaStart=b;
   const key=g.fen()+"|"+d+"|"+(max?"m":"n"),cached=ctx.tt.get(key);
-  if(cached!==undefined)return cached;
+  if(cached){
+    if(cached.flag==="exact")return cached.score;
+    if(cached.flag==="lower")a=Math.max(a,cached.score);
+    else if(cached.flag==="upper")b=Math.min(b,cached.score);
+    if(a>=b)return cached.score;
+  }
   const ms=moveOrder(g.moves({verbose:true}));let best=max?-Infinity:Infinity;
   for(const m of ms){
     g.move(m);let v;try{v=search(d-1,a,b,!max,ctx);}finally{g.undo();}
     if(max){best=Math.max(best,v);a=Math.max(a,best);}else{best=Math.min(best,v);b=Math.min(b,best);}
     if(b<=a)break;
   }
-  if(ctx.tt.size<50000)ctx.tt.set(key,best);
+  if(ctx.tt.size<50000){
+    const flag=best<=alphaStart?"upper":best>=betaStart?"lower":"exact";
+    ctx.tt.set(key,{score:best,flag});
+  }
   return best;
 }
 function quiescence(a,b,max,ctx,ply){
