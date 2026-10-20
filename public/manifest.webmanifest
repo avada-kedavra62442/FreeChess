@@ -2,7 +2,7 @@
   "id": "/",
   "name": "FreeChess — Play Your Way",
   "short_name": "FreeChess",
-  "description": "A beautiful, private chess game with adjustable bot strength and four house-inspired themes.",
+  "description": "A beautiful, private chess game with adjustable bot strength and four colour themes.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
