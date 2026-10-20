@@ -1,5 +1,5 @@
-const CACHE = "freechess-shell-v13";
-const CORE = ["/", "/manifest.webmanifest", "/icons/icon.svg", "/icons/apple-touch-icon.svg", "/icons/icon-72.svg", "/icons/icon-96.svg", "/icons/icon-128.svg", "/icons/icon-192.svg", "/icons/icon-256.svg", "/icons/icon-512.svg"];
+const CACHE = "freechess-shell-v14";
+const CORE = ["/", "/manifest.webmanifest", "/icons/icon.svg", "/icons/apple-touch-icon.svg", "/icons/apple-touch-icon.png", "/icons/icon-72.svg", "/icons/icon-96.svg", "/icons/icon-128.svg", "/icons/icon-192.svg", "/icons/icon-256.svg", "/icons/icon-512.svg"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting()));
 });
