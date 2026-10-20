@@ -92,8 +92,9 @@ function choose(){
 // Stockfish's UCI_Elo floor is 1320; below that, Skill Level is the supported control.
 // Elo is a target, not a guaranteed FIDE/Chess.com rating: engine build, time and hardware matter.
 function stockfishSkill(){
-  if(elo<1320)return Math.max(0,Math.min(20,Math.round((elo-100)/61)));
-  return 20;
+  // Native Elo limiting starts at 1320. Below that, keep the engine at its weakest setting
+  // and use the separate mistake-rate curve in finishBotMove() to scale beginner levels.
+  return elo<1320?0:20;
 }
 function configureStockfish(){
   if(!sfWorker)return;
