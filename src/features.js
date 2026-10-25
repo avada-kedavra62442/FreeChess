@@ -122,6 +122,16 @@ function engineReview(pgn,onProgress){
  });
 }
 
+export async function persistPreferences(preferences){
+ localStorage.setItem("fc-theme",preferences.theme||"green");
+ localStorage.setItem("fc-elo",String(preferences.elo||800));
+ if(supabase){const user=await currentUser();if(user){const {error}=await supabase.from("user_progress").upsert({user_id:user.id,progress_key:"preferences",progress_value:preferences,updated_at:new Date().toISOString()},{onConflict:"user_id,progress_key"});if(error)console.warn("Could not sync FreeChess preferences:",error.message);}}
+}
+export async function hydratePreferences(){
+ if(!supabase)return null;
+ try{const user=await currentUser();if(!user)return null;const {data,error}=await supabase.from("user_progress").select("progress_value").eq("user_id",user.id).eq("progress_key","preferences").maybeSingle();if(error){console.warn("Could not load FreeChess preferences:",error.message);return null;}return data?.progress_value||null;}catch{return null;}
+}
+
 export function renderFeatureRoute(pathname){
  const routes={"/import":importPage,"/learn":learnPage,"/online":onlinePage,"/analysis":analysisPage,"/login":()=>authPage(false),"/signup":()=>authPage(true)};
  if(!routes[pathname])return false;routes[pathname]();return true;
