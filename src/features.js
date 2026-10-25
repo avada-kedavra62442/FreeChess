@@ -76,15 +76,16 @@ function onlinePage(){
 }
 
 async function accountPage(){
- shell("Your account","Your chess journey, saved games, preferences and lesson progress.",'<section class="feature-card" id="accountPanel"><p>Loading account…</p></section><section class="feature-card"><h2>Recent games on this device</h2><div id="accountGames"></div></section>');
+ shell("Your account","Your chess journey, saved games, preferences and lesson progress.",'<section class="feature-card" id="accountPanel"><p>Loading account…</p></section><section class="feature-card"><h2>Recent games</h2><div id="accountGames"></div></section>');
  const user=await currentUser(),panel=document.querySelector("#accountPanel");
- const games=JSON.parse(localStorage.getItem("fc-saved-games")||"[]");
+ let games=JSON.parse(localStorage.getItem("fc-saved-games")||"[]"),progress={};
+ if(user){progress=await getProgress();if(Array.isArray(progress.games)){const merged=new Map();for(const game of [...progress.games,...games])if(game.gameId)merged.set(game.gameId,game);games=[...merged.values()].sort((a,b)=>new Date(b.savedAt||0)-new Date(a.savedAt||0)).slice(0,30);localStorage.setItem("fc-saved-games",JSON.stringify(games));}}
  document.querySelector("#accountGames").innerHTML=games.length?games.slice(0,8).map((g,i)=>'<div class="saved-game-row"><div><strong>'+(g.mode==="human"?"Human match":"Vs bot")+'</strong><small>'+(g.elo?g.elo+" Elo · ":"")+(g.savedAt?new Date(g.savedAt).toLocaleString():"Saved locally")+'</small></div><button class="secondary-btn" data-open-game="'+i+'">Continue / review</button></div>').join(""):'<p>No games saved yet. Your moves will appear here as you play.</p>';
  document.querySelectorAll("[data-open-game]").forEach(b=>b.onclick=()=>{const g=games[+b.dataset.openGame];if(g)goToPlay(g.fen,g.pgn);});
  if(!supabase){panel.innerHTML='<h2>Account setup needed</h2><p>Connect the Supabase project in Vercel to activate sign-in, cloud progress, Google and Apple OAuth.</p><a class="primary-btn" href="/login">Sign in / create account ↗</a>';return;}
  if(!user){panel.innerHTML='<h2>Save your journey</h2><p>Sign in to sync lesson completion and preferences between devices.</p><div class="feature-actions"><a class="primary-btn" href="/login">Sign in</a><a class="secondary-btn" href="/signup">Create account</a></div>';return;}
- const progress=await getProgress(),done=Object.values(progress.lessons||{}).filter(Boolean).length;
- panel.innerHTML='<div class="account-identity"><div class="auth-mark">♞</div><div><h2>'+esc(user.user_metadata?.display_name||user.email||"Chess player")+'</h2><p>'+esc(user.email||"Signed in")+'</p></div></div><div class="account-stats"><div><strong>'+done+'</strong><small>Lessons completed</small></div><div><strong>'+games.length+'</strong><small>Recent games on this device</small></div><div><strong>'+(progress.preferences?.elo||localStorage.getItem("fc-elo")||800)+'</strong><small>Target Elo</small></div></div><div class="feature-actions"><a class="primary-btn" href="/learn">Continue learning ↗</a><button id="signOut" class="secondary-btn">Sign out</button></div><p id="featureNotice" class="feature-notice" role="status"></p>';
+ const done=Object.values(progress.lessons||{}).filter(Boolean).length;
+ panel.innerHTML='<div class="account-identity"><div class="auth-mark">♞</div><div><h2>'+esc(user.user_metadata?.display_name||user.email||"Chess player")+'</h2><p>'+esc(user.email||"Signed in")+'</p></div></div><div class="account-stats"><div><strong>'+done+'</strong><small>Lessons completed</small></div><div><strong>'+games.length+'</strong><small>Saved games</small></div><div><strong>'+(progress.preferences?.elo||localStorage.getItem("fc-elo")||800)+'</strong><small>Target Elo</small></div></div><div class="feature-actions"><a class="primary-btn" href="/learn">Continue learning ↗</a><button id="signOut" class="secondary-btn">Sign out</button></div><p id="featureNotice" class="feature-notice" role="status"></p>';
  document.querySelector("#signOut").onclick=async()=>{const {error}=await supabase.auth.signOut();if(error){note(error.message);return;}location.href="/";};
 }
 function analysisPage(){
