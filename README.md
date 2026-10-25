@@ -6,7 +6,7 @@ A responsive, installable chess experience with a Stockfish-powered chess engine
 - Stockfish 19 Lite powers the opponent in a dedicated Web Worker, with adjustable strength presets from **100 to 3000 Elo** in 100-point increments.
 - Four color-only themes: **Red**, **Green**, **Blue**, and **Yellow**, each with a distinct accent palette and matching board colors.
 - Dedicated play page at `/play`, legal moves, move history, undo, board flip, and game-state detection.
-- Chess runs locally in the browser; no account or game-data upload.
+- Guest bot games run locally in the browser. Signed-in users can sync learning progress, preferences, and recent game positions through their configured Supabase project.
 - PWA manifest, service worker, and Apple Home Screen metadata.
 
 ## Run locally
