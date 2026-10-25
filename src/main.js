@@ -1,4 +1,4 @@
-import { renderFeatureRoute, persistPreferences, hydratePreferences } from "./features.js";
+import { renderFeatureRoute, persistPreferences, hydratePreferences, persistGameProgress } from "./features.js";
 import { Chess } from "chess.js";
 import "./style.css";
 const themes={red:["Red","#e0525d","#3b111b","#d7b15e","#ead0c7","#782a37"],green:["Green","#5fd0a1","#0d2c25","#c5d4cf","#d6e5da","#2d6855"],blue:["Blue","#80a9ff","#111e3b","#c99a66","#dbe2f2","#425b91"],yellow:["Yellow","#f0c45e","#33250d","#d6c49b","#f1e0ae","#826b38"]};
@@ -167,7 +167,7 @@ function finishBotMove(m){
       const blunderChance=elo<200?.78:elo<400?.64:elo<600?.49:elo<800?.35:elo<1000?.23:elo<1200?.13:elo<1320?.05:0;
       const chosen=legalMoves.length&&Math.random()<blunderChance?legalMoves[Math.floor(Math.random()*legalMoves.length)]:(legal||legalMoves[0]);
       const d=chosen?g.move({from:chosen.from,to:chosen.to,promotion:chosen.promotion||"q"}):null;
-      if(d)last={from:d.from,to:d.to,side:"bot",san:d.san};
+      if(d){last={from:d.from,to:d.to,side:"bot",san:d.san};persistGameProgress({mode:"bot",pgn:g.pgn(),fen:g.fen(),elo,theme:themeKey});}
     }
   }catch(err){console.error("FreeChess bot move failed:",err);}
   finally{busy=false;sel=null;targets=[];draw();moves();status();}
