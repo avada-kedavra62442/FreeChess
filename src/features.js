@@ -122,6 +122,15 @@ function engineReview(pgn,onProgress){
  });
 }
 
+let gameSaveTimer=null;
+export function persistGameProgress(game){
+ const games=JSON.parse(localStorage.getItem("fc-saved-games")||"[]");
+ games.unshift({...game,savedAt:new Date().toISOString()});
+ const dedup=games.filter((item,i)=>i===0||item.pgn!==games[0].pgn).slice(0,30);
+ localStorage.setItem("fc-saved-games",JSON.stringify(dedup));
+ clearTimeout(gameSaveTimer);
+ gameSaveTimer=setTimeout(()=>saveProgress("games",dedup),1000);
+}
 export async function persistPreferences(preferences){
  localStorage.setItem("fc-theme",preferences.theme||"green");
  localStorage.setItem("fc-elo",String(preferences.elo||800));
