@@ -3,6 +3,34 @@
     {
       "source": "/play",
       "destination": "/"
+    },
+    {
+      "source": "/import",
+      "destination": "/"
+    },
+    {
+      "source": "/online",
+      "destination": "/"
+    },
+    {
+      "source": "/learn",
+      "destination": "/"
+    },
+    {
+      "source": "/analysis",
+      "destination": "/"
+    },
+    {
+      "source": "/account",
+      "destination": "/"
+    },
+    {
+      "source": "/login",
+      "destination": "/"
+    },
+    {
+      "source": "/signup",
+      "destination": "/"
     }
   ]
 }
