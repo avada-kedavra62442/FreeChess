@@ -25,7 +25,7 @@ function note(message, good=false) { const n=document.querySelector("#featureNot
 async function currentUser(){ if(!supabase)return null; const {data}=await supabase.auth.getUser(); return data?.user||null; }
 async function saveProgress(key, value){ const local=JSON.parse(localStorage.getItem("fc-progress")||"{}");local[key]=value;localStorage.setItem("fc-progress",JSON.stringify(local));if(supabase){const user=await currentUser();if(user)await supabase.from("user_progress").upsert({user_id:user.id,progress_key:key,progress_value:value,updated_at:new Date().toISOString()},{onConflict:"user_id,progress_key"});} }
 async function getProgress(){let p=JSON.parse(localStorage.getItem("fc-progress")||"{}");if(supabase){const user=await currentUser();if(user){const {data}=await supabase.from("user_progress").select("progress_key,progress_value").eq("user_id",user.id);if(data)for(const row of data)p[row.progress_key]=row.progress_value;}}return p;}
-function goToPlay(fen,pgn){const params=new URLSearchParams();if(fen)params.set("fen",fen);if(pgn)params.set("pgn",pgn);location.href="/play"+(params.size?"?"+params.toString():"");}
+function goToPlay(fen,pgn){const params=new URLSearchParams();if(pgn)params.set("pgn",pgn);else if(fen)params.set("fen",fen);location.href="/play"+(params.size?"?"+params.toString():"");}
 
 function importPage(){
  shell("Continue any game","Paste a PGN game or a FEN position. FreeChess will restore the position so you can continue playing from the middle.",'<section class="feature-card"><div class="feature-tabs"><button class="feature-tab active" data-import-tab="pgn">Paste PGN</button><button class="feature-tab" data-import-tab="fen">Paste FEN</button></div><label class="field-label" for="importText" id="importLabel">PGN notation</label><textarea id="importText" rows="8" placeholder="[Event \"Casual Game\"]&#10;1. e4 e5 2. Nf3 Nc6 3. Bb5 a6"></textarea><div class="feature-actions"><button class="primary-btn" id="loadPosition">Load position ↗</button><button class="secondary-btn" id="pasteSample">Use sample</button></div><p id="featureNotice" class="feature-notice" role="status"></p></section><section id="importPreview" class="feature-card" hidden></section>');
@@ -137,8 +137,11 @@ function engineReview(pgn,onProgress){
 let gameSaveTimer=null;
 export function persistGameProgress(game){
  const games=JSON.parse(localStorage.getItem("fc-saved-games")||"[]");
- games.unshift({...game,savedAt:new Date().toISOString()});
- const dedup=games.filter((item,i)=>i===0||item.pgn!==games[0].pgn).slice(0,30);
+ const gameId=game.gameId||(game.mode==="human"?"human-"+game.room:"saved-"+Date.now());
+ const entry={...game,gameId,savedAt:new Date().toISOString()};
+ const index=games.findIndex(item=>item.gameId===gameId);
+ if(index>=0)games[index]=entry;else games.unshift(entry);
+ const dedup=games.slice(0,30);
  localStorage.setItem("fc-saved-games",JSON.stringify(dedup));
  clearTimeout(gameSaveTimer);
  gameSaveTimer=setTimeout(()=>saveProgress("games",dedup),1000);
