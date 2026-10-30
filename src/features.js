@@ -27,22 +27,18 @@ function importPage(){
 }
 
 function authPage(signup=false){
- const params=new URLSearchParams(location.search);
- const requested=params.get("next")||"/account";
- const next=requested.startsWith("/")&&!requested.startsWith("//")?requested:"/account";
- const title=signup?"Create your account":"Welcome back";
- shell(title,signup?"Create a FreeChess account to keep your games and preferences in sync.":"Sign in to continue your chess journey.",'<section class="auth-card feature-card"><div class="auth-brand"><span class="auth-mark">♞</span><span>FreeChess</span></div><p class="eyebrow">YOUR GAME. YOUR ACCOUNT.</p><h2 id="authTitle">'+(signup?"Create your account":"Welcome back.")+'</h2><p class="auth-copy">Sign in to sync your games and preferences across devices, or continue as a guest. Guest mode never requires an account.</p><form id="authForm"><label class="field-label" for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com"><label class="field-label" for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="'+(signup?"new-password":"current-password")+'" minlength="6" required placeholder="At least 6 characters"><div class="auth-buttons"><button class="auth-primary" id="authSubmit" type="submit">'+(signup?"Create account":"Sign in")+'</button><a class="auth-secondary" href="'+(signup?"/login":"/signup")+'?next='+encodeURIComponent(next)+'">'+(signup?"Sign in":"Create account")+'</a></div></form><div class="auth-divider"><span>OR CONTINUE WITH</span></div><button class="auth-provider-button auth-google-button" id="googleAuth" type="button"><span class="provider-logo">G</span><span>Continue with Google</span></button><button class="auth-provider-button auth-discord-button" id="discordAuth" type="button"><span class="provider-logo discord-mark">◉</span><span>Continue with Discord</span></button><p id="authNotice" class="auth-message" role="status"></p><button class="guest-mode-button" id="guestModeButton" type="button">Continue as guest <span>→</span></button><p class="auth-footnote">Free to play · No subscription · Your choice</p><small class="auth-privacy">Authentication is handled securely by Supabase. FreeChess never stores raw passwords.</small></section>');
- const notice=document.querySelector("#authNotice"),form=document.querySelector("#authForm");
- const say=(message,good=false)=>{notice.textContent=message;notice.className="auth-message"+(good?" good":"");};
+ const params=new URLSearchParams(location.search),requested=params.get("next")||"/account",next=requested.startsWith("/")&&!requested.startsWith("//")?requested:"/account";
+ shell("Your account","Sign in to sync your games and preferences across devices.",'<div class="auth-modal-backdrop" id="authBackdrop"><div class="auth-stack"><section class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle"><button class="modal-close" id="authClose" type="button" aria-label="Close">×</button><div class="auth-brand"><span class="auth-brand-mark">♞</span><span>FreeChess</span></div><p class="eyebrow">WELCOME TO FREECHESS</p><h2 id="authTitle">'+(signup?"Create your account":"Your next move starts here.")+'</h2><p class="auth-copy">Sign in to sync your games across devices, or continue as a guest. Guest mode never requires an account.</p><form id="authForm"><label>Email<input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com"></label><label>Password<input id="authPassword" type="password" autocomplete="'+(signup?"new-password":"current-password")+'" minlength="6" required placeholder="At least 6 characters"></label><div class="auth-buttons"><button class="auth-primary" id="authSubmit" type="submit">'+(signup?"Create account":"Sign in")+'</button><button class="auth-secondary" id="authModeSwitch" type="button">'+(signup?"I already have an account":"Create account")+'</button></div></form><div class="auth-divider"><span>OR CONTINUE WITH</span></div><button class="auth-provider-button auth-google-button" id="googleAuth" type="button"><svg class="provider-logo google-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.46 13.72 17.74 9.5 24 9.5Z" transform="translate(0 4)"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 38.03 46.98 31.93 46.98 24.55Z"/><path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.2A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19Z" transform="translate(0 4)"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.55-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48Z" transform="translate(0 -2)"/></svg><span>Continue with Google</span></button><button class="auth-provider-button auth-discord-button" id="discordAuth" type="button"><svg class="provider-logo discord-logo" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.73 5.1A19.4 19.4 0 0 0 14.96 3.6l-.59 1.2a17.9 17.9 0 0 0-4.74 0l-.6-1.2A19.3 19.3 0 0 0 4.27 5.1C1.25 9.57.43 13.93.84 18.23a19.6 19.6 0 0 0 5.86 2.96l1.26-2.05a12.8 12.8 0 0 1-1.98-.96l.48-.37c3.82 1.77 7.97 1.77 11.75 0l.5.37c-.64.38-1.3.7-1.99.96l1.26 2.05a19.5 19.5 0 0 0 5.87-2.96c.49-4.98-.82-9.3-4.12-13.13ZM8.9 15.3c-1.14 0-2.07-1.04-2.07-2.32s.91-2.32 2.07-2.32 2.08 1.05 2.06 2.32c0 1.28-.91 2.32-2.06 2.32Zm6.2 0c-1.14 0-2.07-1.04-2.07-2.32s.91-2.32 2.07-2.32 2.08 1.05 2.06 2.32c0 1.28-.91 2.32-2.06 2.32Z"/></svg><span>Continue with Discord</span></button><p id="authNotice" class="auth-message" role="status"></p></section><button class="guest-mode-button" id="guestModeButton" type="button">Continue as guest <span>→</span></button><p class="auth-footnote">Free to play · No subscription · Your choice</p></div></div>');
+ const notice=document.querySelector("#authNotice"),form=document.querySelector("#authForm"),say=(message,good=false)=>{notice.textContent=message;notice.className="auth-message"+(good?" good":"");};
+ document.querySelector("#authClose").onclick=()=>location.href="/";document.querySelector("#authBackdrop").onclick=event=>{if(event.target.id==="authBackdrop")location.href="/";};
  document.querySelector("#guestModeButton").onclick=()=>location.href=next.startsWith("/online")?"/":(next==="/account"?"/":next);
- if(!supabase){say("Accounts are not configured yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to the FreeChess Vercel project, then redeploy.");form.querySelectorAll("input,button").forEach(el=>el.disabled=true);document.querySelector("#googleAuth").disabled=true;document.querySelector("#discordAuth").disabled=true;return;}
+ document.querySelector("#authModeSwitch").onclick=()=>location.href=(signup?"/login":"/signup")+"?next="+encodeURIComponent(next);
+ if(!supabase){say("Accounts are not configured yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to FreeChess in Vercel, then redeploy.");form.querySelectorAll("input,button").forEach(el=>el.disabled=true);document.querySelector("#googleAuth").disabled=true;document.querySelector("#discordAuth").disabled=true;return;}
  supabase.auth.getSession().then(({data})=>{if(data.session?.user)location.replace(next);});
  form.onsubmit=async event=>{event.preventDefault();const email=document.querySelector("#authEmail").value.trim(),password=document.querySelector("#authPassword").value;if(!email||password.length<6){say("Enter a valid email and a password with at least 6 characters.");return;}const submit=document.querySelector("#authSubmit");submit.disabled=true;say("Working…");try{const result=signup?await supabase.auth.signUp({email,password}):await supabase.auth.signInWithPassword({email,password});if(result.error)throw result.error;if(signup&&!result.data.session){say("Account created. Check your email to confirm, then sign in.",true);return;}say("Signed in. Your cloud account is ready.",true);location.replace(next);}catch(error){say(error.message||"Authentication failed. Please try again.");}finally{submit.disabled=false;}};
  async function oauth(provider,label){say("Redirecting to "+label+"…");const {error}=await supabase.auth.signInWithOAuth({provider,options:{redirectTo:location.origin+next}});if(error)say(error.message);}
- document.querySelector("#googleAuth").onclick=()=>oauth("google","Google");
- document.querySelector("#discordAuth").onclick=()=>oauth("discord","Discord");
+ document.querySelector("#googleAuth").onclick=()=>oauth("google","Google");document.querySelector("#discordAuth").onclick=()=>oauth("discord","Discord");
 }
-
 function onlinePage(){
  const params=new URLSearchParams(location.search);
  let room=(params.get("room")||"").toUpperCase(),channel=null,chess=new Chess(),color=null,selected=null,legal=[],user=null,sessionKey=(globalThis.crypto?.randomUUID?.()||("guest-"+Date.now()+"-"+Math.random().toString(36).slice(2)));
@@ -147,50 +143,45 @@ async function accountPage(){
  document.querySelector("#signOut").onclick=async()=>{const {error}=await supabase.auth.signOut();if(error){note(error.message);return;}location.href="/";};
 }
 function analysisPage(){
- shell("Understand every move","Review a PGN with Stockfish-powered candidate moves and a centipawn-loss estimate. Analysis runs in your browser; longer games take more time.",'<section class="feature-card"><label class="field-label" for="analysisPgn">Paste game PGN</label><textarea id="analysisPgn" rows="7" placeholder="1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 ..."></textarea><div class="feature-actions"><button id="runAnalysis" class="primary-btn">Analyze game ↗</button><button id="sampleAnalysis" class="secondary-btn">Load sample game</button></div><p id="featureNotice" class="feature-notice" role="status"></p></section><section id="analysisResults" class="feature-card" hidden></section>');
+ shell("Understand every move","Review a PGN with the local Stockfish engine. It warms up while you prepare the game and stays running for faster repeat analysis.",'<section class="feature-card"><label class="field-label" for="analysisPgn">Paste game PGN</label><textarea id="analysisPgn" rows="7" placeholder="1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 ..."></textarea><div class="feature-actions"><button id="runAnalysis" class="primary-btn">Analyze game ↗</button><button id="sampleAnalysis" class="secondary-btn">Load sample game</button></div><p id="featureNotice" class="feature-notice" role="status">Preparing local Stockfish…</p></section><section id="analysisResults" class="feature-card" hidden></section>');
  const incomingPgn=new URLSearchParams(location.search).get("pgn");if(incomingPgn)document.querySelector("#analysisPgn").value=incomingPgn;document.querySelector("#sampleAnalysis").onclick=()=>document.querySelector("#analysisPgn").value='[Event "Sample"]\n1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6';
- document.querySelector("#runAnalysis").onclick=async()=>{const text=document.querySelector("#analysisPgn").value.trim();if(!text){note("Paste a PGN first.");return;}let game;try{game=new Chess();game.loadPgn(text);}catch(e){note("PGN could not be parsed: "+e.message);return;}const moves=game.history({verbose:true});if(!moves.length){note("No moves were found in that PGN.");return;}const results=document.querySelector("#analysisResults");results.hidden=false;results.innerHTML='<h2>Analyzing '+moves.length+' half-moves…</h2><p id="analysisProgress">Preparing Stockfish…</p><div class="progress-track"><i id="analysisBar"></i></div><div id="analysisRows"></div>';const button=document.querySelector("#runAnalysis");button.disabled=true;try{const rows=await engineReview(text,(done,total)=>{document.querySelector("#analysisProgress").textContent="Analyzing move "+done+" of "+total+"…";document.querySelector("#analysisBar").style.width=(done/total*100)+"%";});const list=document.querySelector("#analysisRows");list.innerHTML=rows.map((r,i)=>'<div class="analysis-row"><span class="analysis-number">'+(i+1)+'. '+(i%2===0?"White":"Black")+'</span><strong class="analysis-grade '+r.kind.toLowerCase()+'">'+esc(r.kind)+'</strong><span class="analysis-san">'+esc(r.played)+'</span><span class="analysis-alternative">Engine: '+esc(r.best)+'</span><small>'+esc(r.explanation)+'</small></div>').join("");note("Analysis complete. Best-move comparison is an engine aid, not an official rating.",true);saveProgress("last-analysis",{pgn:text,at:Date.now(),moves:rows.length});}catch(e){note("Analysis stopped: "+e.message+" If Stockfish cannot load, retry after the deployment finishes.");}finally{button.disabled=false;}};
+ prepareReviewWorker(message=>note(message)).then(()=>note("Stockfish is ready. Paste a PGN and start your review.",true)).catch(error=>note(error.message));
+ document.querySelector("#runAnalysis").onclick=async()=>{const text=document.querySelector("#analysisPgn").value.trim();if(!text){note("Paste a PGN first.");return;}let game;try{game=new Chess();game.loadPgn(text);}catch(error){note("PGN could not be parsed: "+error.message);return;}const moves=game.history({verbose:true});if(!moves.length){note("No moves were found in that PGN.");return;}const results=document.querySelector("#analysisResults");results.hidden=false;results.innerHTML='<h2>Analyzing '+moves.length+' half-moves…</h2><p id="analysisProgress">Preparing Stockfish…</p><div class="progress-track"><i id="analysisBar"></i></div><div id="analysisRows"></div>';const button=document.querySelector("#runAnalysis");button.disabled=true;try{const rows=await engineReview(text,(done,total)=>{document.querySelector("#analysisProgress").textContent="Analyzing move "+done+" of "+total+"…";document.querySelector("#analysisBar").style.width=(done/total*100)+"%";},message=>{document.querySelector("#analysisProgress").textContent=message;});document.querySelector("#analysisRows").innerHTML=rows.map((row,index)=>'<div class="analysis-row"><span class="analysis-number">'+(index+1)+'. '+(index%2===0?"White":"Black")+'</span><strong class="analysis-grade '+row.kind.toLowerCase()+'">'+esc(row.kind)+'</strong><span class="analysis-san">'+esc(row.played)+'</span><span class="analysis-alternative">Engine: '+esc(row.best)+'</span><small>'+esc(row.explanation)+'</small></div>').join("");note("Analysis complete. Depth 8 is optimized for quicker feedback; deeper analysis takes longer.",true);saveProgress("last-analysis",{pgn:text,at:Date.now(),moves:rows.length});}catch(error){note("Analysis stopped: "+error.message);}finally{button.disabled=false;}};
 }
-function engineReview(pgn,onProgress){
- return new Promise((resolve,reject)=>{
-  let worker;
-  try{worker=new Worker("/engine/stockfish-19-lite-single.js");}catch(e){reject(e);return;}
-  const parsed=new Chess();
-  try{parsed.loadPgn(pgn);}catch(e){worker.terminate();reject(e);return;}
-  const history=parsed.history({verbose:true}),snapshots=[],replay=new Chess();
-  for(const move of history){snapshots.push({fen:replay.fen(),move});replay.move(move);}
-  let index=0,phase="boot",bestUci="",score=null,scoreBefore=0,timeout=null,finished=false;
-  const rows=[];
-  const finishError=err=>{if(finished)return;finished=true;clearTimeout(timeout);worker.terminate();reject(err);};
-  const armTimeout=()=>{clearTimeout(timeout);timeout=setTimeout(()=>finishError(new Error("Stockfish timed out")),25000);};
-  const search=(fen,nextPhase)=>{phase=nextPhase;score=null;worker.postMessage("position fen "+fen);worker.postMessage("go depth 10");armTimeout();};
-  const sanFor=(uci,fen)=>{try{const probe=new Chess(fen);const move=probe.move({from:uci.slice(0,2),to:uci.slice(2,4),promotion:uci[4]||"q"});return move?move.san:uci;}catch{return uci;}};
+let reviewWorker=null,reviewBootPromise=null,reviewWorkerReady=false,reviewRunning=false;
+function prepareReviewWorker(onStatus=()=>{}){
+ if(reviewWorkerReady&&reviewWorker)return Promise.resolve(reviewWorker);if(reviewBootPromise)return reviewBootPromise;
+ reviewBootPromise=new Promise((resolve,reject)=>{let settled=false,bootTimer;
+  const fail=error=>{if(settled)return;settled=true;clearTimeout(bootTimer);try{reviewWorker?.terminate();}catch{}reviewWorker=null;reviewWorkerReady=false;reviewBootPromise=null;reject(error);};
+  try{reviewWorker=new Worker("/engine/stockfish-19-lite-single.js");}catch(error){fail(error);return;}
+  onStatus("Loading the local Stockfish engine…");
+  reviewWorker.onmessage=event=>{const line=String(event.data||"").trim();if(line==="uciok"){reviewWorker.postMessage("setoption name Threads value 1");reviewWorker.postMessage("setoption name Hash value 32");reviewWorker.postMessage("isready");}else if(line==="readyok"&&!settled){settled=true;clearTimeout(bootTimer);reviewWorkerReady=true;onStatus("Stockfish is ready. Your game can be analyzed.");resolve(reviewWorker);}};
+  reviewWorker.onerror=()=>fail(new Error("Stockfish could not start. Refresh the page and try again."));
+  bootTimer=setTimeout(()=>fail(new Error("Stockfish initialization timed out. Check your connection and retry.")),18000);reviewWorker.postMessage("uci");
+ });return reviewBootPromise;
+}
+function engineReview(pgn,onProgress,onStatus=()=>{}){
+ if(reviewRunning)return Promise.reject(new Error("An analysis is already running."));reviewRunning=true;
+ return prepareReviewWorker(onStatus).then(worker=>new Promise((resolve,reject)=>{
+  const parsed=new Chess();try{parsed.loadPgn(pgn);}catch(error){reviewRunning=false;reject(error);return;}
+  const history=parsed.history({verbose:true}),snapshots=[],replay=new Chess();for(const move of history){snapshots.push({fen:replay.fen(),move});replay.move(move);}
+  let index=0,phase="before",bestUci="",score=null,scoreBefore=0,timeout=null,finished=false;const rows=[];
+  const cleanup=()=>{clearTimeout(timeout);reviewRunning=false;};
+  const finishError=error=>{if(finished)return;finished=true;cleanup();try{worker.terminate();}catch{}reviewWorker=null;reviewWorkerReady=false;reviewBootPromise=null;reject(error);};
+  const armTimeout=()=>{clearTimeout(timeout);timeout=setTimeout(()=>finishError(new Error("Stockfish search timed out")),18000);};
+  const search=(fen,nextPhase)=>{phase=nextPhase;score=null;worker.postMessage("position fen "+fen);worker.postMessage("go depth 8");armTimeout();};
+  const sanFor=(uci,fen)=>{try{const probe=new Chess(fen),move=probe.move({from:uci.slice(0,2),to:uci.slice(2,4),promotion:uci[4]||"q"});return move?move.san:uci;}catch{return uci;}};
   const uciFor=move=>move.from+move.to+(move.promotion||"");
-  const startNext=()=>{if(index>=history.length){if(!finished){finished=true;clearTimeout(timeout);worker.terminate();resolve(rows);}return;}search(snapshots[index].fen,"before");};
-  worker.onmessage=e=>{
-   const line=String(e.data||"").trim();
-   if(line==="uciok"){worker.postMessage("setoption name Threads value 1");worker.postMessage("setoption name Hash value 32");worker.postMessage("isready");return;}
-   if(line==="readyok"){startNext();return;}
-   const cp=line.match(/\\bscore cp (-?\\d+)/);if(cp)score=Number(cp[1]);
-   const mate=line.match(/\\bscore mate (-?\\d+)/);if(mate)score=Math.sign(Number(mate[1]))*10000;
-   const best=line.match(/^bestmove\\s+(\\S+)/);if(!best)return;
-   clearTimeout(timeout);
-   if(phase==="before"){
-    bestUci=best[1];scoreBefore=score??0;
-    const after=new Chess(snapshots[index].fen);after.move(snapshots[index].move);
-    search(after.fen(),"after");return;
-   }
-   if(phase==="after"){
-    const actual=snapshots[index].move,loss=scoreBefore-(-(score??0)),isTop=bestUci===uciFor(actual);
-    let kind;
-    if(isTop&&loss<70)kind="Perfect";else if(loss>=300)kind="Blunder";else if(loss>=150)kind="Mistake";else if(loss>=70)kind="Inaccuracy";else kind="Good";
-    rows.push({played:actual.san,best:sanFor(bestUci,snapshots[index].fen),kind,explanation:kind==="Perfect"?"Matched Stockfish’s top move at this search depth.":kind==="Blunder"?"Large evaluation loss. Review the opponent’s strongest reply and the tactical idea missed.":kind==="Mistake"?"A substantially stronger continuation was available.":kind==="Inaccuracy"?"A more precise move could preserve more of the position’s value.":"A reasonable move with a relatively small evaluation loss."});
-    index++;onProgress(index,history.length);startNext();
-   }
+  const startNext=()=>{if(index>=history.length){if(!finished){finished=true;cleanup();resolve(rows);}return;}search(snapshots[index].fen,"before");};
+  worker.onmessage=event=>{const line=String(event.data||"").trim(),cp=line.match(/\bscore cp (-?\d+)/),mate=line.match(/\bscore mate (-?\d+)/),best=line.match(/^bestmove\s+(\S+)/);if(cp)score=Number(cp[1]);if(mate)score=Math.sign(Number(mate[1]))*10000;if(!best)return;clearTimeout(timeout);
+   if(phase==="before"){bestUci=best[1];scoreBefore=score??0;const after=new Chess(snapshots[index].fen);after.move(snapshots[index].move);search(after.fen(),"after");return;}
+   const actual=snapshots[index].move,loss=scoreBefore-(-(score??0)),isTop=bestUci===uciFor(actual);let kind;
+   if(isTop&&loss<70)kind="Perfect";else if(loss>=300)kind="Blunder";else if(loss>=150)kind="Mistake";else if(loss>=70)kind="Inaccuracy";else kind="Good";
+   rows.push({played:actual.san,best:sanFor(bestUci,snapshots[index].fen),kind,explanation:kind==="Perfect"?"Matched Stockfish’s top move at this search depth.":kind==="Blunder"?"Large evaluation loss. Review the opponent’s strongest reply and the tactical idea missed.":kind==="Mistake"?"A substantially stronger continuation was available.":kind==="Inaccuracy"?"A more precise move could preserve more of the position’s value.":"A reasonable move with a relatively small evaluation loss."});
+   index++;onProgress(index,history.length);startNext();
   };
-  worker.onerror=()=>finishError(new Error("Stockfish worker could not load"));
-  armTimeout();worker.postMessage("uci");
- });
+  worker.onerror=()=>finishError(new Error("Stockfish worker could not load"));startNext();
+ })).catch(error=>{reviewRunning=false;throw error;});
 }
 
 let gameSaveTimer=null;
